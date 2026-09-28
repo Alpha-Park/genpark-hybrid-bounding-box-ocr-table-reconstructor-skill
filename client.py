@@ -11,7 +11,10 @@ class BoundingBoxTableReconstructor:
 
     def reconstruct_table_grid(self, bounding_boxes):
         if not bounding_boxes:
-            return {"rows": [], "num_rows": 0, "num_cols": 0}
+            return {"grid": [], "num_rows": 0, "num_cols": 0}
+
+        if any(b["x1"] < b["x0"] or b["y1"] < b["y0"] for b in bounding_boxes):
+            raise ValueError("Invalid bounding box coordinates")
 
         # Sort boxes primarily by vertical midpoint (y), then by horizontal start (x0)
         def box_v_center(b):
@@ -41,7 +44,7 @@ class BoundingBoxTableReconstructor:
         col_splits = []
         for r in raw_rows:
             for b in r:
-                x_mid = (b.get("x0", 0) + b.get("x1", 0)) / 2.0
+                x_mid = b.get("x0", 0)
                 matched = False
                 for c in col_splits:
                     if abs(x_mid - c["center"]) < self.x_gap_threshold:
@@ -60,7 +63,7 @@ class BoundingBoxTableReconstructor:
         for r in raw_rows:
             row_cells = [""] * num_cols
             for b in r:
-                b_mid = (b.get("x0", 0) + b.get("x1", 0)) / 2.0
+                b_mid = b.get("x0", 0)
                 # Find closest column
                 closest_idx = min(range(num_cols), key=lambda idx: abs(b_mid - col_splits[idx]["center"]))
                 existing = row_cells[closest_idx]
@@ -74,6 +77,7 @@ class BoundingBoxTableReconstructor:
         }
 
     def format_to_markdown(self, grid):
+        grid = [[cell.replace("|", "\\|").replace("\n", "<br>") for cell in row] for row in grid]
         if not grid:
             return ""
         lines = []

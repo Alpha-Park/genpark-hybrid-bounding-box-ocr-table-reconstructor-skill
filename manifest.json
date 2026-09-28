@@ -1,0 +1,34 @@
+{
+  "manifest_version": "0.3",
+  "name": "genpark-ocr-table",
+  "version": "1.0.1",
+  "description": "Group supplied OCR text boxes into left-aligned table rows and columns. No image OCR is performed.",
+  "author": {
+    "name": "GenPark AI Engineering"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alpha-Park/genpark-hybrid-bounding-box-ocr-table-reconstructor-skill"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "mcp_server.py",
+    "mcp_config": {
+      "command": "python",
+      "args": [
+        "${__dirname}/mcp_server.py"
+      ]
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "win32",
+      "darwin",
+      "linux"
+    ],
+    "runtimes": {
+      "python": ">=3.9"
+    }
+  }
+}
